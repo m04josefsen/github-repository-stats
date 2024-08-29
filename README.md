@@ -13,6 +13,7 @@ This project is designed to be integrated into other repositories, allowing user
 - **Spring WebFlux**: Used for making non-blocking HTTP requests to the GitHub API.
 - **Graphics2D**: Java 2D API for creating and manipulating images.
 - **Maven**: Build automation tool used to manage dependencies and packaging.
+- **Heroku**: Platform-as-a-service used to deploy and run the application.
 
 ## Features
 
@@ -22,20 +23,17 @@ This project is designed to be integrated into other repositories, allowing user
 
 ## Showcase
 
-Below is a sample output of the generated image:
+Below is a sample output of the generated image of this repository:
 
-<img alt="Contributors of the project" src="http://localhost:8080/repo-stats/m04josefsen/github-repository-stats">
-
-_**Note:** The image is currently only connected to localhost, and will therefore only be on at certain times._
+<img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/m04josefsen/github-repository-stats">
 
 ## Usage
 
 To use this service in your GitHub repository, add the following HTML tag to your README:
 
 ```html
-<img src="http://your-server-url/repo-stats/{owner}/{repository}" alt="Repository Stats">
+<img src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/{owner}/{repository}" alt="Repository Stats">
 ```
-_**Note:** Currently no server to have it up at all times, usage will be updated when online._
 
 ---
 
