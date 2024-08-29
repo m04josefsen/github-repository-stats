@@ -13,10 +13,12 @@ public class StatsController {
     public StatsController(GithubService githubService) {
         this.githubService = githubService;
     }
-
+    // http://localhost:8080/repo-stats/m04josefsen/terminal-anime-recommendation-program
     @GetMapping("/repo-stats/{owner}/{repository}")
     public ResponseEntity<String> getRepoStats(@PathVariable String owner, @PathVariable String repository) {
-        githubService.getTest(owner, repository);
+        //githubService.getTest(owner, repository);
+        //githubService.getCommitsTest(owner, repository);
+        githubService.getContributorsTest(owner, repository);
 
         return ResponseEntity.ok().body("OK");
     }
