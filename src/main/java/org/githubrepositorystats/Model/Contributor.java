@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class Contributor {
     private String login;
     private int contributions;
+    private String avatarUrl;
 }

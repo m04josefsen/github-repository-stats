@@ -56,8 +56,9 @@ public class GithubService {
                 JsonNode contributor = contributors.next();
                 String login = contributor.get("login").asText();
                 int contributions = contributor.get("contributions").asInt();
+                String avatarUrl = contributor.get("avatar_url").asText();
 
-                Contributor c = new Contributor(login, contributions);
+                Contributor c = new Contributor(login, contributions, avatarUrl);
                 System.out.println(c);
                 System.out.println();
                 contributorlist.add(c);
