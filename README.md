@@ -32,7 +32,7 @@ Below is a sample output of the generated image of this repository:
 To use this service in your GitHub repository, add the following HTML tag to your README:
 
 ```html
-<img src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/{owner}/{repository}" alt="Repository Stats">
+<img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/{owner}/{repository}?ts=TIMESTAMP_PLACEHOLDER">
 ```
 
 ---
