@@ -25,14 +25,14 @@ This project is designed to be integrated into other repositories, allowing user
 
 Below is a sample output of the generated image of this repository:
 
-<img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/m04josefsen/github-repository-stats?ts=TIMESTAMP_PLACEHOLDER">
+<img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/m04josefsen/github-repository-contributions?ts=TIMESTAMP_PLACEHOLDER">
 
 ## Usage
 
 To use this service in your GitHub repository, add the following HTML tag to your README:
 
 ```html
-<img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/{owner}/{repository}?ts=TIMESTAMP_PLACEHOLDER">
+<img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-contributions/{owner}/{repository}?ts=TIMESTAMP_PLACEHOLDER">
 ```
 
 ---

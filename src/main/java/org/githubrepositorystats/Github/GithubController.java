@@ -4,10 +4,7 @@ import org.githubrepositorystats.Model.Commit;
 import org.githubrepositorystats.Model.Contributor;
 import org.githubrepositorystats.MakeImage;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class GithubController {
@@ -30,12 +28,23 @@ public class GithubController {
     public ResponseEntity<InputStreamResource> getRepoContributions(
             @PathVariable String owner,
             @PathVariable String repository,
-            @RequestParam(value = "ts", required = false) String timestamp) throws IOException {
+            @RequestParam(required = false) String ts) throws IOException {
+
         List<Contributor> contributorList = githubService.getContributors(owner, repository);
 
         if (contributorList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+
+        // Generate a unique cache-busting parameter
+        String uniqueTs = ts != null ? ts : UUID.randomUUID().toString();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setCacheControl(CacheControl.noCache().getHeaderValue());
+        headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.set("Pragma", "no-cache");
+        headers.set("Expires", "0");
+        headers.set("Timestamp", uniqueTs); // Optionally include this for debugging
 
         return MakeImage.createImage(contributorList);
     }
