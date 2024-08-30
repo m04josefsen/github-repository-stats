@@ -1,0 +1,25 @@
+name: Update README
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs every hour
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Update README with timestamp
+      run: |
+        TIMESTAMP=$(date +%s)
+        sed -i "s|https://yourapp.herokuapp.com/repo-contributions/owner/repo.*|https://yourapp.herokuapp.com/repo-contributions/owner/repo?ts=${TIMESTAMP}|" README.md
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add README.md
+        git commit -m "Update image URL with timestamp"
+        git push
