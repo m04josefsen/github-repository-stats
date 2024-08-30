@@ -2,11 +2,13 @@ package org.githubrepositorystats.Github;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.githubrepositorystats.Model.Commit;
 import org.githubrepositorystats.Model.Contributor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -25,7 +27,9 @@ public class GithubService {
     }
 
     // Method to fetch all commits in a Github repository
-    public void getCommits(String owner, String repository) {
+    public List<Commit> getCommits(String owner, String repository) {
+        List<Commit> commitList = new ArrayList<>();
+
         String jsonResponse = this.webClient.get()
                 .uri("/repos/{owner}/{repository}/commits", owner, repository)
                 .retrieve()
@@ -33,6 +37,8 @@ public class GithubService {
                 .block();
 
         System.out.println(jsonResponse);
+
+        return commitList;
     }
 
     // Method to fetch all contributors in a Github repository
@@ -67,6 +73,8 @@ public class GithubService {
             e.printStackTrace();
             logger.severe("Error in getContributors: " + e.getMessage());
         }
+
+        contributorlist.sort(Comparator.comparingInt(Contributor::getContributions).reversed());
 
         return contributorlist;
     }

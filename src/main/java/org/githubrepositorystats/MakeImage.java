@@ -1,72 +1,99 @@
 package org.githubrepositorystats;
 
 import org.githubrepositorystats.Model.Contributor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+/* ChatGPT used as boilerplate code because F Graphics2D */
 public class MakeImage {
 
-    /* ChatGPT used as boilerplate code */
-    public static byte[] createImage(List<Contributor> contributors) throws IOException {
+    private static final Color BACKGROUND_COLOR = new Color(40, 44, 52); // Dark gray background
+    private static final Color BORDER_COLOR = new Color(72, 74, 84); // Slightly lighter border color
+    private static final Color TEXT_COLOR = new Color(255, 255, 255); // White text color
+    private static final Font NAME_FONT = new Font("Segoe UI", Font.BOLD, 16);
+    private static final Font CONTRIBUTION_FONT = new Font("Segoe UI", Font.PLAIN, 14);
+
+    public static ResponseEntity<InputStreamResource> createImage(List<Contributor> contributors) throws IOException {
         int width = 600;
-        int height = 100 + contributors.size() * 60;  // Dynamic height based on the number of contributors
-        int avatarSize = 50;
+        int height = 100 + 80 * contributors.size(); // Adjust height based on number of contributors
+        int avatarSize = 60;
         int padding = 20;
-        int textXOffset = padding + avatarSize + 20;
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = bufferedImage.createGraphics();
 
-        // Enable anti-aliasing for better quality
+        // Enable anti-aliasing for text and graphics
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-        // Background with gradient
-        GradientPaint gradientPaint = new GradientPaint(0, 0, Color.decode("#f5f7fa"), 0, height, Color.decode("#c3cfe2"));
-        g2d.setPaint(gradientPaint);
+        // Draw background
+        g2d.setColor(BACKGROUND_COLOR);
         g2d.fillRect(0, 0, width, height);
 
-        // Rounded rectangle as a card
-        g2d.setColor(Color.white);
-        g2d.fill(new RoundRectangle2D.Double(20, 20, width - 40, height - 40, 30, 30));
+        // Draw border
+        g2d.setColor(BORDER_COLOR);
+        g2d.setStroke(new BasicStroke(4)); // Border thickness
+        g2d.drawRect(0, 0, width - 1, height - 1);
 
-        // Set font styles
-        Font titleFont = new Font("Roboto", Font.BOLD, 24);
-        Font textFont = new Font("Roboto", Font.PLAIN, 18);
-        g2d.setFont(titleFont);
-        g2d.setColor(Color.decode("#333333"));
-
-        // Draw title
-        g2d.drawString("Top Contributors", padding, 60);
-
-        // Loop through contributors and draw each one
-        g2d.setFont(textFont);
-        int yOffset = 100;
+        // Draw each contributor
+        int y = padding;
         for (Contributor contributor : contributors) {
-            // Draw contributor's avatar
-            BufferedImage avatar = ImageIO.read(new URL(contributor.getAvatarUrl())); // Fetch the avatar from URL
-            g2d.drawImage(avatar, padding, yOffset - avatarSize / 2, avatarSize, avatarSize, null);
+            // Draw avatar
+            BufferedImage avatarImage = ImageIO.read(new URL(contributor.getAvatarUrl()));
+            BufferedImage roundedAvatar = createRoundedAvatar(avatarImage, avatarSize);
+            g2d.drawImage(roundedAvatar, padding, y, avatarSize, avatarSize, null);
 
-            // Draw contributor's login and contributions
-            g2d.drawString(contributor.getLogin(), textXOffset, yOffset);
-            g2d.drawString("Contributions: " + contributor.getContributions(), textXOffset, yOffset + 20);
+            // Draw contributor name
+            g2d.setColor(TEXT_COLOR);
+            g2d.setFont(NAME_FONT);
+            g2d.drawString(contributor.getLogin(), avatarSize + 2 * padding, y + avatarSize / 2);
 
-            yOffset += 60;  // Move down for the next contributor
+            // Draw contribution count
+            g2d.setFont(CONTRIBUTION_FONT);
+            g2d.drawString("Contributions: " + contributor.getContributions(), avatarSize + 2 * padding, y + avatarSize / 2 + 20);
+
+            y += avatarSize + padding;
         }
 
-        // Clean up
         g2d.dispose();
 
+        // Convert BufferedImage to InputStreamResource
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", baos);
-        baos.flush();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
 
-        return baos.toByteArray();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setContentLength(baos.size());
+
+        return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
+    }
+
+    private static BufferedImage createRoundedAvatar(BufferedImage avatarImage, int size) {
+        BufferedImage roundedAvatar = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = roundedAvatar.createGraphics();
+
+        // Enable anti-aliasing
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Draw a rounded image
+        g2d.setClip(new RoundRectangle2D.Double(0, 0, size, size, size / 2, size / 2));
+        g2d.drawImage(avatarImage, 0, 0, size, size, null);
+
+        g2d.dispose();
+        return roundedAvatar;
     }
 }
