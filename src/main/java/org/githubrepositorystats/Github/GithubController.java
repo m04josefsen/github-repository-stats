@@ -1,7 +1,9 @@
 package org.githubrepositorystats.Github;
 
+import org.githubrepositorystats.Model.Commit;
 import org.githubrepositorystats.Model.Contributor;
 import org.githubrepositorystats.MakeImage;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,34 +24,24 @@ public class GithubController {
         this.githubService = githubService;
     }
 
-    //TODO: en getMapping returnerer et bilde, en annen returnerer et annet etc
+    // Data about most contributions
+    @GetMapping("/repo-contributions/{owner}/{repository}")
+    public ResponseEntity<InputStreamResource> getRepoContributions(@PathVariable String owner, @PathVariable String repository) throws IOException {
+        List<Contributor> contributorList = githubService.getContributors(owner, repository);
 
-    /*
-    @GetMapping("/repo-stats/{owner}/{repository}")
-    public ResponseEntity<String> getRepoStats(@PathVariable String owner, @PathVariable String repository) {
-        //githubService.getTest(owner, repository);
-        //githubService.getCommits(owner, repository);
-        githubService.getContributors(owner, repository);
-
-        return ResponseEntity.ok().body("OK");
-    }
-     */
-
-    @GetMapping("/repo-stats/{owner}/{repository}")
-    public ResponseEntity<byte[]> getRepoStats(@PathVariable String owner, @PathVariable String repository) throws IOException {
-        List<Contributor> contributorlist = githubService.getContributors(owner, repository);
-
-        if (contributorlist.isEmpty()) {
+        if (contributorList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        byte[] imageBytes = MakeImage.createImage(contributorlist);
+        return MakeImage.createImage(contributorList);
+    }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
-        headers.setContentLength(imageBytes.length);
+    // Data about commits
+    @GetMapping("/repo-commits/{owner}/{repository}")
+    public ResponseEntity<InputStreamResource> getRepoCommits(@PathVariable String owner, @PathVariable String repository) throws IOException {
+        List<Commit> commitList = githubService.getCommits(owner, repository);
 
-        return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+        return null;
     }
 
 
