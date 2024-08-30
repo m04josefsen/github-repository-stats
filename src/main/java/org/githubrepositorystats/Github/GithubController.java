@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -26,7 +27,10 @@ public class GithubController {
 
     // Data about most contributions
     @GetMapping("/repo-contributions/{owner}/{repository}")
-    public ResponseEntity<InputStreamResource> getRepoContributions(@PathVariable String owner, @PathVariable String repository) throws IOException {
+    public ResponseEntity<InputStreamResource> getRepoContributions(
+            @PathVariable String owner,
+            @PathVariable String repository,
+            @RequestParam(value = "ts", required = false) String timestamp) throws IOException {
         List<Contributor> contributorList = githubService.getContributors(owner, repository);
 
         if (contributorList.isEmpty()) {
