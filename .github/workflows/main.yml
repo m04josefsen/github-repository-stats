@@ -1,25 +1,27 @@
-name: Update README
+name: Update README with Timestamp
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs every hour
+    - cron: '0 * * * *'  # Runs every hour; adjust this to your preferred frequency
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Update README with timestamp
-      run: |
-        TIMESTAMP=$(date +%s)
-        sed -i "s|https://yourapp.herokuapp.com/repo-contributions/owner/repo.*|https://yourapp.herokuapp.com/repo-contributions/owner/repo?ts=${TIMESTAMP}|" README.md
+      - name: Update README with timestamp
+        run: |
+          TIMESTAMP=$(date +%s)
+          # Replace the placeholder URL with the actual URL and timestamp
+          sed -i "s|https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/m04josefsen/github-repository-stats?ts=.*|https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-stats/m04josefsen/github-repository-stats?ts=${TIMESTAMP}|" README.md
 
-    - name: Commit and push changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add README.md
-        git commit -m "Update image URL with timestamp"
-        git push
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Update image URL with new timestamp"
+          git push
