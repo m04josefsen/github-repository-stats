@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.CacheControl;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -75,9 +76,13 @@ public class MakeImage {
         ImageIO.write(bufferedImage, "png", baos);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
 
+        // Set HTTP headers to prevent caching
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
         headers.setContentLength(baos.size());
+        headers.setCacheControl(CacheControl.noCache().getHeaderValue());  // Prevents caching
+        headers.setPragma("no-cache");  // HTTP/1.0 backward compatibility
+        headers.setExpires(0);  // Ensures no caching by setting expiration to past time
 
         return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
     }
