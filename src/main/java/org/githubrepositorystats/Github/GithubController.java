@@ -39,22 +39,38 @@ public class GithubController {
         // Generate a unique cache-busting parameter
         String uniqueTs = ts != null ? ts : UUID.randomUUID().toString();
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
-        headers.setCacheControl(CacheControl.noCache().getHeaderValue());
-        headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.set("Pragma", "no-cache");
-        headers.set("Expires", "0");
-        headers.set("Timestamp", uniqueTs); // Optionally include this for debugging
+        setHeaders(headers, uniqueTs);
 
         return MakeImage.createImage(contributorList);
     }
 
     // Data about commits
     @GetMapping("/repo-commits/{owner}/{repository}")
-    public ResponseEntity<InputStreamResource> getRepoCommits(@PathVariable String owner, @PathVariable String repository) throws IOException {
+    public ResponseEntity<InputStreamResource> getRepoCommits(
+            @PathVariable String owner,
+            @PathVariable String repository,
+            @RequestParam(required = false) String ts) throws IOException {
+
         List<Commit> commitList = githubService.getCommits(owner, repository);
 
+        if(commitList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        String uniqueTs = ts != null ? ts : UUID.randomUUID().toString();
+        HttpHeaders headers = new HttpHeaders();
+        setHeaders(headers, uniqueTs);
+
         return null;
+    }
+
+    public void setHeaders(HttpHeaders headers, String uniqueTs) {
+        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setCacheControl(CacheControl.noCache().getHeaderValue());
+        headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.set("Pragma", "no-cache");
+        headers.set("Expires", "0");
+        headers.set("Timestamp", uniqueTs); // Optionally include this for debugging
     }
 
 
