@@ -27,7 +27,7 @@ public class MakeImage {
     private static final Font NAME_FONT = new Font("Segoe UI", Font.BOLD, 16);
     private static final Font CONTRIBUTION_FONT = new Font("Segoe UI", Font.PLAIN, 14);
 
-    public static ResponseEntity<InputStreamResource> createImage(List<Contributor> contributors) throws IOException {
+    public static ResponseEntity<InputStreamResource> createImageForContributor(List<Contributor> contributors) throws IOException {
         int width = 600;
         int height = 100 + 80 * contributors.size(); // Adjust height based on number of contributors
         int avatarSize = 60;
@@ -87,6 +87,10 @@ public class MakeImage {
         return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
     }
 
+    public static ResponseEntity<InputStreamResource> createImageForCommit(List<Contributor> contributors) throws IOException {
+
+        return null;
+    }
     private static BufferedImage createRoundedAvatar(BufferedImage avatarImage, int size) {
         BufferedImage roundedAvatar = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = roundedAvatar.createGraphics();

@@ -7,10 +7,8 @@ import org.githubrepositorystats.Model.Contributor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Service
@@ -35,8 +33,47 @@ public class GithubService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+        //System.out.println(jsonResponse);
 
-        System.out.println(jsonResponse);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+            // Iterate over each contributor
+            Iterator<JsonNode> commits = rootNode.elements();
+            while (commits.hasNext()) {
+                JsonNode commitNode = commits.next();
+
+                // Extracting author details
+                JsonNode authorNode = commitNode.get("commit").get("author");
+                String authorName = authorNode.get("name").asText();
+                String authorEmail = authorNode.get("email").asText();
+
+                // Extracting commit date
+                String dateString = authorNode.get("date").asText();
+                Date date = null;
+                try {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    date = formatter.parse(dateString);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                String message = commitNode.get("commit").get("message").asText();
+                String url = commitNode.get("html_url").asText();
+
+                Commit c = new Commit(authorName, authorEmail, date, message, url);
+                System.out.println(c);
+                System.out.println();
+                commitList.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.severe("Error in getCommits: " + e.getMessage());
+        }
+
+        commitList.sort(Comparator.comparing(Commit::getDate).reversed());
 
         return commitList;
     }
@@ -59,10 +96,11 @@ public class GithubService {
             // Iterate over each contributor
             Iterator<JsonNode> contributors = rootNode.elements();
             while (contributors.hasNext()) {
-                JsonNode contributor = contributors.next();
-                String login = contributor.get("login").asText();
-                int contributions = contributor.get("contributions").asInt();
-                String avatarUrl = contributor.get("avatar_url").asText();
+                JsonNode contributorNode = contributors.next();
+
+                String login = contributorNode.get("login").asText();
+                int contributions = contributorNode.get("contributions").asInt();
+                String avatarUrl = contributorNode.get("avatar_url").asText();
 
                 Contributor c = new Contributor(login, contributions, avatarUrl);
                 System.out.println(c);

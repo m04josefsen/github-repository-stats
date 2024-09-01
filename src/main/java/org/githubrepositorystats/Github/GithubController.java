@@ -41,7 +41,7 @@ public class GithubController {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers, uniqueTs);
 
-        return MakeImage.createImage(contributorList);
+        return MakeImage.createImageForContributor(contributorList);
     }
 
     // Data about commits
