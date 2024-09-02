@@ -1,5 +1,6 @@
 package org.githubrepositorystats;
 
+import org.githubrepositorystats.Model.Commit;
 import org.githubrepositorystats.Model.Contributor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /* ChatGPT used as boilerplate code because F Graphics2D */
@@ -26,6 +28,8 @@ public class MakeImage {
     private static final Color TEXT_COLOR = new Color(255, 255, 255); // White text color
     private static final Font NAME_FONT = new Font("Segoe UI", Font.BOLD, 16);
     private static final Font CONTRIBUTION_FONT = new Font("Segoe UI", Font.PLAIN, 14);
+    private static final Font MESSAGE_FONT = new Font("Arial", Font.PLAIN, 16);
+    private static final Font DATE_FONT = new Font("Arial", Font.ITALIC, 14);
 
     public static ResponseEntity<InputStreamResource> createImageForContributor(List<Contributor> contributors) throws IOException {
         int width = 600;
@@ -87,10 +91,93 @@ public class MakeImage {
         return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
     }
 
-    public static ResponseEntity<InputStreamResource> createImageForCommit(List<Contributor> contributors) throws IOException {
+    public static ResponseEntity<InputStreamResource> createImageForCommits(List<Commit> commits) throws IOException {
+        int width = 600;
+        int height = 260; // Fixed height for two commits
+        int avatarSize = 60;
+        int padding = 20;
+        int labelHeight = 20;
 
-        return null;
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = bufferedImage.createGraphics();
+
+        // Enable anti-aliasing for text and graphics
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+
+        // Draw dark background
+        g2d.setColor(Color.DARK_GRAY); // Dark background color
+        g2d.fillRect(0, 0, width, height);
+
+        // Draw border
+        g2d.setColor(Color.LIGHT_GRAY); // Light gray border color
+        g2d.setStroke(new BasicStroke(4)); // Border thickness
+        g2d.drawRect(0, 0, width - 1, height - 1);
+
+        // Draw the first commit
+        Commit firstCommit = commits.get(0);
+        int y = padding;
+        g2d.setColor(Color.CYAN);
+        g2d.setFont(new Font("Arial", Font.BOLD, 14));
+        g2d.drawString("First Commit", padding, y + labelHeight);
+
+        if (firstCommit.getAvatarUrl() != null && !firstCommit.getAvatarUrl().isEmpty()) {
+            BufferedImage avatarImage = ImageIO.read(new URL(firstCommit.getAvatarUrl()));
+            BufferedImage roundedAvatar = createRoundedAvatar(avatarImage, avatarSize);
+            g2d.drawImage(roundedAvatar, padding, y + labelHeight + padding / 2, avatarSize, avatarSize, null);
+        }
+
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("Arial", Font.BOLD, 16));
+        g2d.drawString(firstCommit.getAuthorName(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+        g2d.drawString("Message: " + firstCommit.getMessage(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 20);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(firstCommit.getDate()), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 40);
+
+        // Draw the latest commit
+        Commit latestCommit = commits.get(commits.size() - 1);
+        y += avatarSize + 3 * padding + labelHeight; // Adjusting y position for the second commit
+        g2d.setColor(Color.CYAN);
+        g2d.setFont(new Font("Arial", Font.BOLD, 14));
+        g2d.drawString("Latest Commit", padding, y + labelHeight);
+
+        if (latestCommit.getAvatarUrl() != null && !latestCommit.getAvatarUrl().isEmpty()) {
+            BufferedImage avatarImage = ImageIO.read(new URL(latestCommit.getAvatarUrl()));
+            BufferedImage roundedAvatar = createRoundedAvatar(avatarImage, avatarSize);
+            g2d.drawImage(roundedAvatar, padding, y + labelHeight + padding / 2, avatarSize, avatarSize, null);
+        }
+
+        g2d.setColor(Color.WHITE);
+        g2d.setFont(new Font("Arial", Font.BOLD, 16));
+        g2d.drawString(latestCommit.getAuthorName(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+        g2d.drawString("Message: " + latestCommit.getMessage(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 20);
+
+        g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(latestCommit.getDate()), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 40);
+
+        g2d.dispose();
+
+        // Convert BufferedImage to InputStreamResource
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", baos);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
+
+        // Set HTTP headers to prevent caching
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setContentLength(baos.size());
+        headers.setCacheControl(CacheControl.noCache().getHeaderValue());  // Prevents caching
+        headers.setPragma("no-cache");  // HTTP/1.0 backward compatibility
+        headers.setExpires(0);  // Ensures no caching by setting expiration to past time
+
+        return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
     }
+
     private static BufferedImage createRoundedAvatar(BufferedImage avatarImage, int size) {
         BufferedImage roundedAvatar = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = roundedAvatar.createGraphics();

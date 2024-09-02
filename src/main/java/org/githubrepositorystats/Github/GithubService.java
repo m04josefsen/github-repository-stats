@@ -63,7 +63,10 @@ public class GithubService {
                 String message = commitNode.get("commit").get("message").asText();
                 String url = commitNode.get("html_url").asText();
 
-                Commit c = new Commit(authorName, authorEmail, date, message, url);
+                JsonNode avatarNode = commitNode.get("author");
+                String avatarUrl = avatarNode.get("avatar_url").asText();
+
+                Commit c = new Commit(authorName, authorEmail, date, message, url, avatarUrl);
                 System.out.println(c);
                 System.out.println();
                 commitList.add(c);

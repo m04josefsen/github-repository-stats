@@ -25,7 +25,11 @@ This project is designed to be integrated into other repositories, allowing user
 
 Below is a sample output of the generated image of this repository:
 
+Contributions:
 <img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-contributions/m04josefsen/github-repository-stats?ts=TIMESTAMP_PLACEHOLDER">
+---
+Commits:
+<img alt="All commits of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-commits/m04josefsen/github-repository-stats?ts=TIMESTAMP_PLACEHOLDER">
 
 ## Usage
 

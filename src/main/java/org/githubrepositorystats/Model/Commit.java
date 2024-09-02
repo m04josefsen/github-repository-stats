@@ -16,4 +16,5 @@ public class Commit {
     private Date date;
     private String message;
     private String url;
+    private String avatarUrl;
 }

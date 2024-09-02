@@ -61,7 +61,7 @@ public class GithubController {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(headers, uniqueTs);
 
-        return null;
+        return MakeImage.createImageForCommits(commitList);
     }
 
     public void setHeaders(HttpHeaders headers, String uniqueTs) {
