@@ -115,7 +115,7 @@ public class MakeImage {
         g2d.drawRect(0, 0, width - 1, height - 1);
 
         // Draw the first commit
-        Commit firstCommit = commits.get(0);
+        Commit firstCommit = commits.get(commits.size() - 1);
         int y = padding;
         g2d.setColor(Color.CYAN);
         g2d.setFont(new Font("Arial", Font.BOLD, 14));
@@ -138,7 +138,7 @@ public class MakeImage {
         g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(firstCommit.getDate()), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 40);
 
         // Draw the latest commit
-        Commit latestCommit = commits.get(commits.size() - 1);
+        Commit latestCommit = commits.get(0);
         y += avatarSize + 3 * padding + labelHeight; // Adjusting y position for the second commit
         g2d.setColor(Color.CYAN);
         g2d.setFont(new Font("Arial", Font.BOLD, 14));
