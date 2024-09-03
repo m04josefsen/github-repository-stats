@@ -24,63 +24,6 @@ public class GithubService {
         System.out.println(this.webClient.get().uri("/repos/{owner}/{repository}", owner, repository).retrieve().bodyToMono(String.class).block());
     }
 
-    // Method to fetch all commits in a Github repository
-    public List<Commit> getCommits(String owner, String repository) {
-        List<Commit> commitList = new ArrayList<>();
-
-        String jsonResponse = this.webClient.get()
-                .uri("/repos/{owner}/{repository}/commits", owner, repository)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-        //System.out.println(jsonResponse);
-
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(jsonResponse);
-
-            // Iterate over each contributor
-            Iterator<JsonNode> commits = rootNode.elements();
-            while (commits.hasNext()) {
-                JsonNode commitNode = commits.next();
-
-                // Extracting author details
-                JsonNode authorNode = commitNode.get("commit").get("author");
-                String authorName = authorNode.get("name").asText();
-                String authorEmail = authorNode.get("email").asText();
-
-                // Extracting commit date
-                String dateString = authorNode.get("date").asText();
-                Date date = null;
-                try {
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                    date = formatter.parse(dateString);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                String message = commitNode.get("commit").get("message").asText();
-                String url = commitNode.get("html_url").asText();
-
-                JsonNode avatarNode = commitNode.get("author");
-                String avatarUrl = avatarNode.get("avatar_url").asText();
-
-                Commit c = new Commit(authorName, authorEmail, date, message, url, avatarUrl);
-                System.out.println(c);
-                System.out.println();
-                commitList.add(c);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.severe("Error in getCommits: " + e.getMessage());
-        }
-
-        commitList.sort(Comparator.comparing(Commit::getDate).reversed());
-
-        return commitList;
-    }
-
     // Method to fetch all contributors in a Github repository
     public List<Contributor> getContributors(String owner, String repository) {
         List<Contributor> contributorlist = new ArrayList<>();
@@ -118,5 +61,61 @@ public class GithubService {
         contributorlist.sort(Comparator.comparingInt(Contributor::getContributions).reversed());
 
         return contributorlist;
+    }
+
+    // Method to fetch all commits in a Github repository
+    public List<Commit> getCommits(String owner, String repository) {
+        List<Commit> commitList = new ArrayList<>();
+
+        String jsonResponse = this.webClient.get()
+                .uri("/repos/{owner}/{repository}/commits", owner, repository)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        //System.out.println(jsonResponse);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+            // Iterate over each contributor
+            Iterator<JsonNode> commits = rootNode.elements();
+            while (commits.hasNext()) {
+                JsonNode commitNode = commits.next();
+
+                // Extracting author details
+                JsonNode authorNode = commitNode.get("commit").get("author");
+                String authorName = authorNode.get("name").asText();
+                String authorEmail = authorNode.get("email").asText();
+
+
+                // Extracting commit date
+                String dateString = authorNode.get("date").asText();
+                Date date = null;
+                try {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    date = formatter.parse(dateString);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                String message = commitNode.get("commit").get("message").asText();
+                String url = commitNode.get("html_url").asText();
+
+                JsonNode authorDetailnode = commitNode.get("author");
+                String avatarUrl = authorDetailnode.get("avatar_url").asText();
+                String login = authorDetailnode.get("login").asText();
+
+                Commit c = new Commit(authorName, authorEmail, login, date, message, url, avatarUrl);
+                commitList.add(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.severe("Error in getCommits: " + e.getMessage());
+        }
+
+        commitList.sort(Comparator.comparing(Commit::getDate).reversed());
+
+        return commitList;
     }
 }

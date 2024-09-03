@@ -13,6 +13,7 @@ import java.util.List;
 public class Commit {
     private String authorName;
     private String authorEmail;
+    private String login;
     private Date date;
     private String message;
     private String url;

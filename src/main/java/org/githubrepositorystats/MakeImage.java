@@ -29,7 +29,7 @@ public class MakeImage {
     private static final Font NAME_FONT = new Font("Segoe UI", Font.BOLD, 16);
     private static final Font CONTRIBUTION_FONT = new Font("Segoe UI", Font.PLAIN, 14);
     private static final Font MESSAGE_FONT = new Font("Arial", Font.PLAIN, 16);
-    private static final Font DATE_FONT = new Font("Arial", Font.ITALIC, 14);
+    private static final Font DATE_FONT = new Font("Segoe UI", Font.PLAIN, 12);
 
     public static ResponseEntity<InputStreamResource> createImageForContributor(List<Contributor> contributors) throws IOException {
         int width = 600;
@@ -106,19 +106,19 @@ public class MakeImage {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
         // Draw dark background
-        g2d.setColor(Color.DARK_GRAY); // Dark background color
+        g2d.setColor(BACKGROUND_COLOR);
         g2d.fillRect(0, 0, width, height);
 
         // Draw border
-        g2d.setColor(Color.LIGHT_GRAY); // Light gray border color
+        g2d.setColor(BORDER_COLOR);
         g2d.setStroke(new BasicStroke(4)); // Border thickness
         g2d.drawRect(0, 0, width - 1, height - 1);
 
         // Draw the first commit
         Commit firstCommit = commits.get(commits.size() - 1);
         int y = padding;
-        g2d.setColor(Color.CYAN);
-        g2d.setFont(new Font("Arial", Font.BOLD, 14));
+        g2d.setColor(TEXT_COLOR);
+        g2d.setFont(NAME_FONT);
         g2d.drawString("First Commit", padding, y + labelHeight);
 
         if (firstCommit.getAvatarUrl() != null && !firstCommit.getAvatarUrl().isEmpty()) {
@@ -128,20 +128,20 @@ public class MakeImage {
         }
 
         g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Arial", Font.BOLD, 16));
-        g2d.drawString(firstCommit.getAuthorName(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2);
+        g2d.setFont(NAME_FONT);
+        g2d.drawString(firstCommit.getLogin(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2);
 
-        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+        g2d.setFont(CONTRIBUTION_FONT);
         g2d.drawString("Message: " + firstCommit.getMessage(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 20);
 
-        g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2d.setFont(DATE_FONT);
         g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(firstCommit.getDate()), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 40);
 
         // Draw the latest commit
         Commit latestCommit = commits.get(0);
         y += avatarSize + 3 * padding + labelHeight; // Adjusting y position for the second commit
-        g2d.setColor(Color.CYAN);
-        g2d.setFont(new Font("Arial", Font.BOLD, 14));
+        g2d.setColor(TEXT_COLOR);
+        g2d.setFont(NAME_FONT);
         g2d.drawString("Latest Commit", padding, y + labelHeight);
 
         if (latestCommit.getAvatarUrl() != null && !latestCommit.getAvatarUrl().isEmpty()) {
@@ -150,14 +150,14 @@ public class MakeImage {
             g2d.drawImage(roundedAvatar, padding, y + labelHeight + padding / 2, avatarSize, avatarSize, null);
         }
 
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Arial", Font.BOLD, 16));
-        g2d.drawString(latestCommit.getAuthorName(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2);
+        g2d.setColor(TEXT_COLOR);
+        g2d.setFont(NAME_FONT);
+        g2d.drawString(latestCommit.getLogin(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2);
 
-        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+        g2d.setFont(CONTRIBUTION_FONT);
         g2d.drawString("Message: " + latestCommit.getMessage(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 20);
 
-        g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+        g2d.setFont(DATE_FONT);
         g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(latestCommit.getDate()), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 40);
 
         g2d.dispose();
