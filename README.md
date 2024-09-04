@@ -6,6 +6,8 @@ The GitHub Repository Stats Generator is a web service that dynamically generate
 
 This project is designed to be integrated into other repositories, allowing users to easily display their repository's contributor statistics using a simple HTML image tag.
 
+**🚧Still a Work in Progress🚧**
+
 ## Technologies Used
 
 - **Java**: Core programming language used to build the application.
@@ -15,33 +17,28 @@ This project is designed to be integrated into other repositories, allowing user
 - **Maven**: Build automation tool used to manage dependencies and packaging.
 - **Heroku**: Platform-as-a-service used to deploy and run the application.
 
-## Features
+## Contributions
 
-- Fetches data directly from the GitHub API.
-- Dynamically generates an image with the top contributors, including their avatars and contribution count.
-- Easy to integrate into any GitHub repository's README.
+<img alt="Contributors of the project" src="http://www.github-read.me/repo-contributions/m04josefsen/github-repository-stats?ts=TIMESTAMP_PLACEHOLDER">
 
-## Showcase
-
-Below is a sample output of the generated image of this repository:
-
-Contributions:
-
-<img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-contributions/m04josefsen/github-repository-stats?ts=TIMESTAMP_PLACEHOLDER">
----
-
-Commits:
-
-<img alt="All commits of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-commits/m04josefsen/github-repository-stats?ts=TIMESTAMP_PLACEHOLDER">
-
-## Usage
-
-To use this service in your GitHub repository, add the following HTML tag to your README:
+To use this in your project, use one of the two examples under:
 
 ```html
-<img alt="Contributors of the project" src="https://github-repository-stats-a51a6f1bd0d1.herokuapp.com/repo-contributions/{owner}/{repository}?ts=TIMESTAMP_PLACEHOLDER">
+![alt text](https://github-read.me/repo-contributions/{owner}/{repository}?ts=TIMESTAMP_PLACEHOLDER)
+
+<img alt="alt text" src="https://github-read.me/repo-contributions/{owner}/{repository}?ts=TIMESTAMP_PLACEHOLDER">
 ```
+Replace {owner} with your GitHub username or organization name, {repository} with the name of your repository.
 
----
+## Commits
 
-*README created by ChatGPT*
+<img alt="Contributors of the project" src="http://www.github-read.me/repo-commits/m04josefsen/github-repository-stats?ts=TIMESTAMP_PLACEHOLDER">
+
+To use this in your project, you can embed the image by choosing one of the two examples below:
+
+```html
+![alt text](https://github-read.me/repo-commits/{owner}/{repository}?ts=TIMESTAMP_PLACEHOLDER)
+
+<img alt="alt text" src="https://github-read.me/repo-commits/{owner}/{repository}?ts=TIMESTAMP_PLACEHOLDER">
+```
+Replace {owner} with your GitHub username or organization name, {repository} with the name of your repository.
