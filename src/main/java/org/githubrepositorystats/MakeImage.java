@@ -93,11 +93,27 @@ public class MakeImage {
 
     public static ResponseEntity<InputStreamResource> createImageForCommits(List<Commit> commits) throws IOException {
         int width = 600;
-        int height = 260; // Fixed height for two commits
         int avatarSize = 60;
         int padding = 20;
         int labelHeight = 20;
+        int textMaxWidth = width - (avatarSize + 3 * padding); // Max width for text before wrapping
 
+        // Calculate dynamic height based on the commits
+        int height = padding; // Start with padding at the top
+
+        // Calculate height for first commit
+        Commit firstCommit = commits.get(commits.size() - 1);
+        height += labelHeight + avatarSize + padding; // Add label and avatar size
+        int firstCommitTextHeight = calculateWrappedTextHeight(firstCommit.getMessage(), CONTRIBUTION_FONT, textMaxWidth);
+        height += firstCommitTextHeight + 40; // Add space for wrapped text and date
+
+        // Calculate height for latest commit
+        Commit latestCommit = commits.get(0);
+        height += labelHeight + avatarSize + padding; // Add label and avatar size
+        int latestCommitTextHeight = calculateWrappedTextHeight(latestCommit.getMessage(), CONTRIBUTION_FONT, textMaxWidth);
+        height += latestCommitTextHeight + 40; // Add space for wrapped text and date
+
+        // Create a dynamic BufferedImage with the calculated height
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = bufferedImage.createGraphics();
 
@@ -115,7 +131,6 @@ public class MakeImage {
         g2d.drawRect(0, 0, width - 1, height - 1);
 
         // Draw the first commit
-        Commit firstCommit = commits.get(commits.size() - 1);
         int y = padding;
         g2d.setColor(TEXT_COLOR);
         g2d.setFont(NAME_FONT);
@@ -132,14 +147,13 @@ public class MakeImage {
         g2d.drawString(firstCommit.getLogin(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2);
 
         g2d.setFont(CONTRIBUTION_FONT);
-        g2d.drawString("Message: " + firstCommit.getMessage(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 20);
+        int textHeight = drawWrappedText(g2d, "Message: " + firstCommit.getMessage(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 20, textMaxWidth);
 
         g2d.setFont(DATE_FONT);
-        g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(firstCommit.getDate()), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 40);
+        g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(firstCommit.getDate()), avatarSize + 2 * padding, textHeight + 20);
 
         // Draw the latest commit
-        Commit latestCommit = commits.get(0);
-        y += avatarSize + 3 * padding + labelHeight; // Adjusting y position for the second commit
+        y += avatarSize + firstCommitTextHeight + 3 * padding + labelHeight;
         g2d.setColor(TEXT_COLOR);
         g2d.setFont(NAME_FONT);
         g2d.drawString("Latest Commit", padding, y + labelHeight);
@@ -155,10 +169,10 @@ public class MakeImage {
         g2d.drawString(latestCommit.getLogin(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2);
 
         g2d.setFont(CONTRIBUTION_FONT);
-        g2d.drawString("Message: " + latestCommit.getMessage(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 20);
+        textHeight = drawWrappedText(g2d, "Message: " + latestCommit.getMessage(), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 20, textMaxWidth);
 
         g2d.setFont(DATE_FONT);
-        g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(latestCommit.getDate()), avatarSize + 2 * padding, y + labelHeight + avatarSize / 2 + 40);
+        g2d.drawString("Date: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(latestCommit.getDate()), avatarSize + 2 * padding, textHeight + 20);
 
         g2d.dispose();
 
@@ -191,5 +205,65 @@ public class MakeImage {
 
         g2d.dispose();
         return roundedAvatar;
+    }
+
+    private static int drawWrappedText(Graphics2D g2d, String text, int x, int y, int maxWidth) {
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        int lineHeight = fontMetrics.getHeight();
+
+        String[] words = text.split(" ");
+        StringBuilder line = new StringBuilder();
+        int currentY = y;
+
+        for (String word : words) {
+            String testLine = line + word + " ";
+            int testLineWidth = fontMetrics.stringWidth(testLine);
+
+            // If the line is too wide, draw the current line and reset
+            if (testLineWidth > maxWidth) {
+                g2d.drawString(line.toString(), x, currentY);
+                line = new StringBuilder(word + " ");
+                currentY += lineHeight;
+            } else {
+                line.append(word).append(" ");
+            }
+        }
+
+        // Draw the remaining line
+        if (line.length() > 0) {
+            g2d.drawString(line.toString(), x, currentY);
+        }
+
+        // Return the updated Y position after the last line is drawn
+        return currentY + lineHeight;
+    }
+
+    private static int calculateWrappedTextHeight(String text, Font font, int maxWidth) {
+        BufferedImage dummyImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = dummyImage.createGraphics();
+        g2d.setFont(font);
+
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        int lineHeight = fontMetrics.getHeight();
+
+        String[] words = text.split(" ");
+        StringBuilder line = new StringBuilder();
+        int totalHeight = lineHeight; // Start with one line height
+
+        for (String word : words) {
+            String testLine = line + word + " ";
+            int testLineWidth = fontMetrics.stringWidth(testLine);
+
+            if (testLineWidth > maxWidth) {
+                totalHeight += lineHeight;
+                line = new StringBuilder(word + " ");
+            } else {
+                line.append(word).append(" ");
+            }
+        }
+
+        g2d.dispose();
+
+        return totalHeight;
     }
 }
