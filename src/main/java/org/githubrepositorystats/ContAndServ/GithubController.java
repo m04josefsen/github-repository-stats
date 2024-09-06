@@ -1,8 +1,7 @@
-package org.githubrepositorystats.Github;
+package org.githubrepositorystats.ContAndServ;
 
 import org.githubrepositorystats.Model.Commit;
 import org.githubrepositorystats.Model.Contributor;
-import org.githubrepositorystats.MakeImage;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +26,7 @@ public class GithubController {
         this.githubService = githubService;
     }
 
-    // Data about most contributions
+    //Data about most contributions
     @GetMapping("/repo-contributions/{owner}/{repository}")
     public ResponseEntity<InputStreamResource> getRepoContributions(
             @PathVariable String owner,
@@ -32,16 +35,25 @@ public class GithubController {
 
         List<Contributor> contributorList = githubService.getContributors(owner, repository);
 
-        if (contributorList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if(contributorList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        // Generate a unique cache-busting parameter
+        String htmlContent = ImageService.generateHtmlForContributors(contributorList);
+
+        // Converting HTML -> image
+        BufferedImage image = ImageService.htmlToImage(htmlContent);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
+
+        // Setting Headers
         String uniqueTs = ts != null ? ts : UUID.randomUUID().toString();
         HttpHeaders headers = new HttpHeaders();
-        setHeaders(headers, uniqueTs);
+        ImageService.setHeaders(headers, uniqueTs);
 
-        return MakeImage.createImageForContributor(contributorList);
+        return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
+
     }
 
     // Data about commits
@@ -57,21 +69,20 @@ public class GithubController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
+        String htmlContent = ImageService.generateHtmlForCommits(commitList);
+
+        // Converting HTML -> image
+        BufferedImage image = ImageService.htmlToImage(htmlContent);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(baos.toByteArray());
+
+        // Setting Headers
         String uniqueTs = ts != null ? ts : UUID.randomUUID().toString();
         HttpHeaders headers = new HttpHeaders();
-        setHeaders(headers, uniqueTs);
+        ImageService.setHeaders(headers, uniqueTs);
 
-        return MakeImage.createImageForCommits(commitList);
+        return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
     }
-
-    public void setHeaders(HttpHeaders headers, String uniqueTs) {
-        headers.setContentType(MediaType.IMAGE_PNG);
-        headers.setCacheControl(CacheControl.noCache().getHeaderValue());
-        headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.set("Pragma", "no-cache");
-        headers.set("Expires", "0");
-        headers.set("Timestamp", uniqueTs); // Optionally include this for debugging
-    }
-
 
 }
