@@ -107,6 +107,9 @@ public class GithubService {
                 String login = authorDetailnode.get("login").asText();
 
                 Commit c = new Commit(authorName, authorEmail, login, date, message, url, avatarUrl);
+
+                System.out.println(c);
+                System.out.println();
                 commitList.add(c);
             }
         } catch (Exception e) {

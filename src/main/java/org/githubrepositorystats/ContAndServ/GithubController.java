@@ -84,5 +84,4 @@ public class GithubController {
 
         return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
     }
-
 }

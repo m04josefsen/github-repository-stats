@@ -5,6 +5,7 @@ import org.githubrepositorystats.Model.Contributor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 import org.xhtmlrenderer.resource.XMLResource;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 
@@ -13,14 +14,39 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@Service
 public class ImageService {
 
-    // TODO: faktisk bruk disse, fikse border radius på bilde, legg en linje mellom de?
+    // TODO: faktisk bruk disse, fikse border radius på bilde, legg en linje mellom de?,
+    //  må få flex i contributors så de er ved siden av hverandre
     private final static String BACKGROUND_COLOR = "rgb(40, 44, 52))";
     private final static String TEXT_COLOR = "rgb(255, 255, 255)";
 
     // Helper method to generate HTML for contributors
     public static String generateHtmlForContributors(List<Contributor> contributors) {
+        StringBuilder html = new StringBuilder();
+        html.append("<!DOCTYPE html>");
+        html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+        html.append("<head><meta charset='UTF-8'/>");
+        html.append("<link rel='stylesheet' type='text/css' href='src/main/resources/static/contributor.css'/>"); // Link to CSS file
+        html.append("<title>Contributor Data</title></head>");
+        html.append("<body><div class='container'><h1>Contributors</h1>");
+
+        // TODO: sliter med å få styling pga dynamisk laget?
+        for (Contributor c : contributors) {
+            html.append("<div class='contributor'>")
+                    .append("<img src='").append(c.getAvatarUrl()).append("' alt='Avatar' />")
+                    .append("<div><p>").append(c.getLogin()).append("</p>")
+                    .append("<p>Contributions: ").append(c.getContributions()).append("</p></div>")
+                    .append("</div>");
+        }
+
+        html.append("</div></body></html>");
+        return html.toString();
+    }
+
+    // Helper method to generate HTML for contributors
+    public static String generateHtmlForCommits(List<Commit> commits) {
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
         html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
@@ -31,21 +57,12 @@ public class ImageService {
                 .append("</style></head>");
         html.append("<body><div class='container'><h1>Contributors</h1>");
 
-        for (Contributor contributor : contributors) {
-            html.append("<div class='contributor'>")
-                    .append("<img src='").append(contributor.getAvatarUrl()).append("' alt='Avatar' />")
-                    .append("<div><p>").append(contributor.getLogin()).append("</p>")
-                    .append("<p>Contributions: ").append(contributor.getContributions()).append("</p></div>")
-                    .append("</div>");
+        for(Commit c : commits) {
+
         }
 
         html.append("</div></body></html>");
         return html.toString();
-    }
-
-    // Helper method to generate HTML for contributors
-    public static String generateHtmlForCommits(List<Commit> commits) {
-        return null;
     }
 
     // Convert HTML to Image using Flying Saucer (ChatGPT)
@@ -64,7 +81,7 @@ public class ImageService {
         return image;
     }
 
-    // Header settings
+    // Header settings (ChatGPT)
     public static void setHeaders(HttpHeaders headers, String uniqueTs) {
         headers.setContentType(MediaType.IMAGE_PNG);
         headers.setCacheControl(CacheControl.noCache().getHeaderValue());
