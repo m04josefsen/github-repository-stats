@@ -28,7 +28,7 @@ public class ImageService {
         html.append("<!DOCTYPE html>");
         html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
         html.append("<head><meta charset='UTF-8'/>");
-        html.append("<link rel='stylesheet' type='text/css' href='src/main/resources/static/contributor.css'/>"); // Link to CSS file
+        html.append("<link rel='stylesheet' type='text/css' href='src/main/resources/static/contributor.css'/>");
         html.append("<title>Contributor Data</title></head>");
         html.append("<body><div class='container'><h1>Contributors</h1>");
 
@@ -41,7 +41,8 @@ public class ImageService {
                     .append("</div>");
         }
 
-        html.append("</div></body></html>");
+        html.append("</div></body>");
+        html.append("</html>");
         return html.toString();
     }
 
@@ -50,15 +51,16 @@ public class ImageService {
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
         html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-        html.append("<head><meta charset='UTF-8'/><style>")
-                .append(".container { width: 600px; background-color: rgb(40, 44, 52); color: white; border-radius: 5%; }")
-                .append(".contributor { margin-bottom: 10px; display: flex; align-items: center; padding-left: 5%; }")
-                .append(".contributor img { width: 50px; height: 50px; margin-right: 10px; }")
-                .append("</style></head>");
-        html.append("<body><div class='container'><h1>Contributors</h1>");
+        html.append("<head><meta charset='UTF-8'/></head>");
+        html.append("<body><div class='container'><h1>Commits</h1>");
 
         for(Commit c : commits) {
-
+            html.append("<div class='commit'>")
+                    .append("<img src='").append(c.getAvatarUrl()).append("' alt='Avatar' />")
+                    .append("<div><p>").append(c.getLogin()).append("</p>")
+                    .append("<p>Message: ").append(c.getMessage()).append("</p>")
+                    .append("<p>Date: ").append(c.getDate()).append("</p></div>")
+                    .append("</div>");
         }
 
         html.append("</div></body></html>");
