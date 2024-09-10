@@ -12,6 +12,7 @@ import org.xhtmlrenderer.swing.Java2DRenderer;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,12 +33,16 @@ public class ImageService {
         html.append("<title>Contributor Data</title></head>");
         html.append("<body><div class='container'><h1>Contributors</h1>");
 
-        // TODO: sliter med å få styling pga dynamisk laget?
         for (Contributor c : contributors) {
+            // Null checks for each field
+            String avatarUrl = c.getAvatarUrl() != null ? c.getAvatarUrl() : "default-avatar.png";
+            String login = c.getLogin() != null ? escapeHtml(c.getLogin()) : "Unknown";
+            String contributions = String.valueOf(c.getContributions()) != null ? String.valueOf(c.getContributions()) : "0";
+
             html.append("<div class='contributor'>")
-                    .append("<img src='").append(c.getAvatarUrl()).append("' alt='Avatar' />")
-                    .append("<div><p>").append(c.getLogin()).append("</p>")
-                    .append("<p>Contributions: ").append(c.getContributions()).append("</p></div>")
+                    .append("<img src='").append(avatarUrl).append("' alt='Avatar' />")
+                    .append("<div><p>").append(login).append("</p>")
+                    .append("<p>Contributions: ").append(contributions).append("</p></div>")
                     .append("</div>");
         }
 
@@ -46,25 +51,57 @@ public class ImageService {
         return html.toString();
     }
 
-    // Helper method to generate HTML for contributors
+    // Helper method to generate HTML for commits
     public static String generateHtmlForCommits(List<Commit> commits) {
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
         html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-        html.append("<head><meta charset='UTF-8'/></head>");
-        html.append("<body><div class='container'><h1>Commits</h1>");
+        html.append("<head><meta charset='UTF-8'/>");
+        html.append("<link rel='stylesheet' type='text/css' href='src/main/resources/static/commits.css'/>");
+        html.append("</head><body><div class='container'><h1>Commits</h1>");
 
-        for(Commit c : commits) {
-            html.append("<div class='commit'>")
-                    .append("<img src='").append(c.getAvatarUrl()).append("' alt='Avatar' />")
-                    .append("<div><p>").append(c.getLogin()).append("</p>")
-                    .append("<p>Message: ").append(c.getMessage()).append("</p>")
-                    .append("<p>Date: ").append(c.getDate()).append("</p></div>")
-                    .append("</div>");
+        if (commits != null && !commits.isEmpty()) {
+            // Handle the first commit
+            Commit firstCommit = commits.get(commits.size() - 1);
+            appendCommitHtml(html, firstCommit, "First Commit");
+
+            // Handle the last commit
+            if (commits.size() > 1) {
+                Commit lastCommit = commits.get(0);
+                appendCommitHtml(html, lastCommit, "Latest Commit");
+            }
+        } else {
+            html.append("<p>No commits available</p>");
         }
 
         html.append("</div></body></html>");
         return html.toString();
+    }
+
+    // Helper method to append commit information to the HTML
+    private static void appendCommitHtml(StringBuilder html, Commit commit, String label) {
+        String avatarUrl = commit.getAvatarUrl() != null ? commit.getAvatarUrl() : "default-avatar.png";
+        String login = commit.getLogin() != null ? escapeHtml(commit.getLogin()) : "Unknown";
+        String message = commit.getMessage() != null ? escapeHtml(commit.getMessage()) : "No message provided";
+        String date = commit.getDate() != null ? commit.getDate().toString() : "Unknown date";
+
+        html.append("<div class='commit'>")
+                .append("<h2>").append(label).append("</h2>")
+                .append("<img src='").append(avatarUrl).append("' alt='Avatar' style='width:50px;height50px'/>") //TODO: fjern style herfra, problemer å kalle fra css
+                .append("<div><p>").append(login).append("</p>")
+                .append("<p>Message: ").append(message).append("</p>")
+                .append("<p>Date: ").append(date).append("</p></div>")
+                .append("</div>");
+    }
+
+    // Helper function to escape HTML special characters (ChatGPT)
+    public static String escapeHtml(String input) {
+        if (input == null) return "";
+        return input.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 
     // Convert HTML to Image using Flying Saucer (ChatGPT)
