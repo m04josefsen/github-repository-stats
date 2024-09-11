@@ -29,26 +29,32 @@ public class ImageService {
         html.append("<!DOCTYPE html>");
         html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
         html.append("<head><meta charset='UTF-8'/>");
-        html.append("<link rel='stylesheet' type='text/css' href='src/main/resources/static/contributor.css'/>");
+        html.append(cssContributor());
         html.append("<title>Contributor Data</title></head>");
         html.append("<body><div class='container'><h1>Contributors</h1>");
 
+        // Iterate over each contributor and append their HTML using the helper method
         for (Contributor c : contributors) {
-            // Null checks for each field
-            String avatarUrl = c.getAvatarUrl() != null ? c.getAvatarUrl() : "default-avatar.png";
-            String login = c.getLogin() != null ? escapeHtml(c.getLogin()) : "Unknown";
-            String contributions = String.valueOf(c.getContributions()) != null ? String.valueOf(c.getContributions()) : "0";
-
-            html.append("<div class='contributor'>")
-                    .append("<img src='").append(avatarUrl).append("' alt='Avatar' />")
-                    .append("<div><p>").append(login).append("</p>")
-                    .append("<p>Contributions: ").append(contributions).append("</p></div>")
-                    .append("</div>");
+            appendContributorHtml(html, c);
         }
 
         html.append("</div></body>");
         html.append("</html>");
         return html.toString();
+    }
+
+    // Helper method to append contributor HTML details
+    private static void appendContributorHtml(StringBuilder html, Contributor contributor) {
+        // Null checks for each field
+        String avatarUrl = contributor.getAvatarUrl() != null ? contributor.getAvatarUrl() : "default-avatar.png";
+        String login = contributor.getLogin() != null ? escapeHtml(contributor.getLogin()) : "Unknown";
+        String contributions = String.valueOf(contributor.getContributions());
+
+        html.append("<div class='contributor'>")
+                .append("<img src='").append(avatarUrl).append("' alt='Avatar'/>")
+                .append("<div><p>").append(login).append("</p>")
+                .append("<p>Contributions: ").append(contributions).append("</p></div>")
+                .append("</div>");
     }
 
     // Helper method to generate HTML for commits
@@ -57,15 +63,15 @@ public class ImageService {
         html.append("<!DOCTYPE html>");
         html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
         html.append("<head><meta charset='UTF-8'/>");
-        html.append("<link rel='stylesheet' type='text/css' href='src/main/resources/static/commits.css'/>");
+        html.append(cssCommit());
         html.append("</head><body><div class='container'><h1>Commits</h1>");
 
         if (commits != null && !commits.isEmpty()) {
-            // Handle the first commit
+            // First commit
             Commit firstCommit = commits.get(commits.size() - 1);
             appendCommitHtml(html, firstCommit, "First Commit");
 
-            // Handle the last commit
+            // Last commit
             if (commits.size() > 1) {
                 Commit lastCommit = commits.get(0);
                 appendCommitHtml(html, lastCommit, "Latest Commit");
@@ -87,7 +93,7 @@ public class ImageService {
 
         html.append("<div class='commit'>")
                 .append("<h2>").append(label).append("</h2>")
-                .append("<img src='").append(avatarUrl).append("' alt='Avatar' style='width:50px;height50px'/>") //TODO: fjern style herfra, problemer å kalle fra css
+                .append("<img src='").append(avatarUrl).append("' alt='Avatar'/>")
                 .append("<div><p>").append(login).append("</p>")
                 .append("<p>Message: ").append(message).append("</p>")
                 .append("<p>Date: ").append(date).append("</p></div>")
@@ -128,5 +134,29 @@ public class ImageService {
         headers.set("Pragma", "no-cache");
         headers.set("Expires", "0");
         headers.set("Timestamp", uniqueTs);
+    }
+
+    // Styling for Contributor
+    public static String cssContributor() {
+        String css = "<style>";
+        css += ".container {display:flex; flex-direction:row; width:400px; padding:10px; border-radius:5%; background-color:rgb(40,44,52); color:white;}";
+        css += "h1 {text-align:center;}";
+        css += ".contributor {margin-bottom:10px; padding-left:10px; width: 200px;}";
+        css += ".contributor img {width:50px; height:50px; margin-right:10px; border-radius:50%;}";
+        css += "</style>";
+
+        return css;
+    }
+
+    // Styling for Commits
+    public static String cssCommit() {
+        String css = "<style>";
+        css += ".container {display:flex; flex-direction:row; width:400px; padding:10px; border-radius:5%; background-color:rgb(40,44,52); color:white;}";
+        css += "h1 {text-align:center;}";
+        css += ".commits {margin-bottom:10px; padding-left:10px;}";
+        css += ".commits img {width:50px; height:50px; margin-right:10px; border-radius:50%;}";
+        css += "</style>";
+
+        return css;
     }
 }
