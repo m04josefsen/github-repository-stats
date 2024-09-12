@@ -1,4 +1,4 @@
-package org.githubrepositorystats.ContAndServ;
+package org.githubrepositorystats.ControllerAndService;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
