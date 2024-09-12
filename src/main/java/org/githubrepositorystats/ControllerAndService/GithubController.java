@@ -90,7 +90,11 @@ public class GithubController {
     public ResponseEntity<InputStreamResource> getRepoHeatmap(
             @PathVariable String owner,
             @PathVariable String repository,
+            @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String ts) throws IOException {
+
+        //LINK FOR README
+        /* https://github-read.me/repo-commits/{owner}/{repository}?year=YEAR_PLACEHOLDER&ts=TIMESTAMP_PLACEHOLDER */
 
         List<Commit> commitList = githubService.getCommits(owner, repository);
 
