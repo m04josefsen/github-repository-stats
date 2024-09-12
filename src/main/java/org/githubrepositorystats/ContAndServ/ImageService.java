@@ -93,7 +93,7 @@ public class ImageService {
 
         html.append("<div class='commit'>")
                 .append("<h2>").append(label).append("</h2>")
-                .append("<img src='").append(avatarUrl).append("' alt='Avatar'/>")
+                .append("<img src='").append(avatarUrl).append("' alt='Avatar' style='width:50px;height50px;border-radius:50%;' />")
                 .append("<div><p>").append(login).append("</p>")
                 .append("<p>Message: ").append(message).append("</p>")
                 .append("<p>Date: ").append(date).append("</p></div>")
@@ -139,6 +139,7 @@ public class ImageService {
     // Styling for Contributor
     public static String cssContributor() {
         String css = "<style>";
+        css += "body {font-family: Verdana, sans-serif;}";
         css += ".container {display:flex; flex-direction:row; width:400px; padding:10px; border-radius:5%; background-color:rgb(40,44,52); color:white;}";
         css += "h1 {text-align:center;}";
         css += ".contributor {margin-bottom:10px; padding-left:10px; width: 200px;}";
@@ -151,6 +152,7 @@ public class ImageService {
     // Styling for Commits
     public static String cssCommit() {
         String css = "<style>";
+        css += "body {font-family: Verdana, sans-serif;}";
         css += ".container {display:flex; flex-direction:row; width:400px; padding:10px; border-radius:5%; background-color:rgb(40,44,52); color:white;}";
         css += "h1 {text-align:center;}";
         css += ".commits {margin-bottom:10px; padding-left:10px;}";
