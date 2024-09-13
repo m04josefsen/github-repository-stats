@@ -3,6 +3,7 @@ package org.githubrepositorystats.ControllerAndService;
 import org.githubrepositorystats.Model.Commit;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 
@@ -11,10 +12,13 @@ public class HeatmapService {
 
     //TODO: put datoer i et array for hvert år
 
-    private static int[] activityCount;
+    private static int[][] activityCount;
 
     // Helper method to generate HTML for the heatmap
     public static String generateHtmlForHeatmap(List<Commit> commits, int year) {
+        activityCount = new int[12][31];
+
+        /*
         // If leap year
         if(year % 4 == 0) {
             activityCount = new int[366];
@@ -22,8 +26,9 @@ public class HeatmapService {
         else {
             activityCount = new int[365];
         }
+         */
 
-        fillActivityCount();
+        fillActivityCount(commits);
 
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
@@ -58,7 +63,24 @@ public class HeatmapService {
         return css;
     }
 
-    private static void fillActivityCount() {
+    private static void fillActivityCount(List<Commit> commits) {
         // TODO: loop gjennom commits, der dato matcher fyll verdi++;
+
+        for(Commit c : commits) {
+            LocalDate d = c.getDate();
+            int day = d.getDayOfMonth();
+            int month = d.getMonthValue();
+            System.out.println(d);
+            System.out.println("Day: " + day + " - Month: " + month);
+            System.out.println("---");
+
+            activityCount[month-1][day-1]++;
+        }
+
+        for(int i = 0; i < 12; i++) {
+            for(int j = 0; j < 31; j++) {
+                System.out.println(activityCount[i][j]);
+            }
+        }
     }
 }
