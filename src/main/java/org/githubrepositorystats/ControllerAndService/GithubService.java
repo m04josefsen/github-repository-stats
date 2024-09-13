@@ -7,7 +7,8 @@ import org.githubrepositorystats.Model.Contributor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -91,10 +92,10 @@ public class GithubService {
 
                 // Extracting commit date
                 String dateString = authorNode.get("date").asText();
-                Date date = null;
+                LocalDate date = null;
                 try {
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                    date = formatter.parse(dateString);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    date = LocalDate.parse(dateString, formatter);  // Correct method for parsing to LocalDate
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
