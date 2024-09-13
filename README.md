@@ -2,7 +2,7 @@
 
 ## About the Project
 
-The GitHub Repository Stats Generator is a web service that dynamically generates an image showcasing statistics about a GitHub repository's contributors. The image includes the top contributors, their avatars, and the number of contributions they have made to the repository.
+The GitHub Repository Stats Generator is a web service that dynamically generates an image showcasing statistics about a GitHub repository.
 
 This project is designed to be integrated into other repositories, allowing users to easily display their repository's contributor statistics using a simple HTML image tag.
 
@@ -13,7 +13,7 @@ This project is designed to be integrated into other repositories, allowing user
 - **Java**: Core programming language used to build the application.
 - **Spring Boot**: Framework for building the RESTful web service.
 - **Spring WebFlux**: Used for making non-blocking HTTP requests to the GitHub API.
-- **Graphics2D**: Java 2D API for creating and manipulating images.
+- **HTML/CSS**: Used for creating and styling visual content for the application.
 - **Maven**: Build automation tool used to manage dependencies and packaging.
 - **Heroku**: Platform-as-a-service used to deploy and run the application.
 
