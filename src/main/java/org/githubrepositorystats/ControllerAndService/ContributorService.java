@@ -14,7 +14,7 @@ public class ContributorService {
         html.append("<!DOCTYPE html>");
         html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
         html.append("<head><meta charset='UTF-8'/>");
-        html.append(cssContributor());
+        html.append("<link rel='stylesheet' href='src/main/resources/static/contributor.css'/>");
         html.append("<title>Contributor Data</title></head>");
         html.append("<body><div class='container'><h1>Contributors</h1>");
 
@@ -41,18 +41,5 @@ public class ContributorService {
                 .append("<div><p>").append(login).append("</p>")
                 .append("<p>Contributions: ").append(contributions).append("</p></div>")
                 .append("</div>");
-    }
-
-    // Styling for Contributor
-    public static String cssContributor() {
-        String css = "<style>";
-        css += "body {font-family: Verdana, sans-serif;}";
-        css += ".container {display:flex; flex-direction:row; width:400px; padding:10px; border-radius:5%; background-color:rgb(40,44,52); color:white;}";
-        css += "h1 {text-align:center;}";
-        css += ".contributor {display:flex; flex-direction:row; margin-bottom:10px; padding-left:10px; width: 200px;}";
-        css += ".contributor-avatar {width:50px; height:50px; margin-right:10px; border-radius:50%;}";
-        css += "</style>";
-
-        return css;
     }
 }

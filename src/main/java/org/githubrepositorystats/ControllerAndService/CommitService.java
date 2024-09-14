@@ -14,7 +14,7 @@ public class CommitService {
         html.append("<!DOCTYPE html>");
         html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
         html.append("<head><meta charset='UTF-8'/>");
-        html.append(cssCommit());
+        html.append("<link rel='stylesheet' href='src/main/resources/static/commit.css'/>");
         html.append("</head><body><div class='container'><h1>Commits</h1>");
 
         if (commits != null && !commits.isEmpty()) {
@@ -49,18 +49,5 @@ public class CommitService {
                 .append("<p>Message: ").append(message).append("</p>")
                 .append("<p>Date: ").append(date).append("</p></div>")
                 .append("</div>");
-    }
-
-    // Styling for Commits
-    public static String cssCommit() {
-        String css = "<style>";
-        css += "body {font-family: Verdana, sans-serif;}";
-        css += ".container {display:flex; flex-direction:row; width:400px; padding:10px; border-radius:5%; background-color:rgb(40,44,52); color:white;}";
-        css += "h1 {text-align:center;}";
-        css += ".commits {margin-bottom:10px; padding-left:10px;}";
-        css += ".commit-avatar {width:50px; height:50px; margin-right:10px; border-radius:50%;}";
-        css += "</style>";
-
-        return css;
     }
 }
