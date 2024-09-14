@@ -1,0 +1,30 @@
+.heatmap {
+    border: 2px solid orange;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 1000px;
+}
+
+.month {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 8%;
+    border: 1px solid blue;
+}
+
+.day {
+    width: 20px;
+    height: 20px;
+    border: 2px solid black;
+    margin: 1px;
+}
+
+.active {
+    background-color: green;
+}
+
+.inactive {
+    background-color: white;
+}
