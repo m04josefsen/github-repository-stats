@@ -1,4 +1,4 @@
-package org.githubrepositorystats.ControllerAndService;
+package org.githubrepositorystats.Github;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;

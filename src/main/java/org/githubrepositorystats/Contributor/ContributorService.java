@@ -1,6 +1,6 @@
-package org.githubrepositorystats.ControllerAndService;
+package org.githubrepositorystats.Contributor;
 
-import org.githubrepositorystats.Model.Contributor;
+import org.githubrepositorystats.Github.ImageService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

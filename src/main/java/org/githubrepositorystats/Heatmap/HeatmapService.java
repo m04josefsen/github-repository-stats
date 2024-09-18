@@ -1,6 +1,6 @@
-package org.githubrepositorystats.ControllerAndService;
+package org.githubrepositorystats.Heatmap;
 
-import org.githubrepositorystats.Model.Commit;
+import org.githubrepositorystats.Commit.Commit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

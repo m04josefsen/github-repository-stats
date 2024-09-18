@@ -1,4 +1,4 @@
-package org.githubrepositorystats.Model;
+package org.githubrepositorystats.Contributor;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,9 +1,9 @@
-package org.githubrepositorystats.ControllerAndService;
+package org.githubrepositorystats.Github;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.githubrepositorystats.Model.Commit;
-import org.githubrepositorystats.Model.Contributor;
+import org.githubrepositorystats.Commit.Commit;
+import org.githubrepositorystats.Contributor.Contributor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
