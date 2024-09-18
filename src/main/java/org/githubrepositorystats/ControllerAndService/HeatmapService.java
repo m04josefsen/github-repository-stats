@@ -11,8 +11,6 @@ import java.util.List;
 @Service
 public class HeatmapService {
 
-    //TODO: put datoer i et array for hvert år
-
     private static int[][] activityCount;
 
     // Helper method to generate HTML for the heatmap
@@ -23,27 +21,17 @@ public class HeatmapService {
 
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
-        html.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+        html.append("<html lang='en'>");
         html.append("<head><meta charset='UTF-8'/>");
         html.append("<link rel='stylesheet' href='src/main/resources/static/heatmap.css'/>");
         html.append("</head><body><div class='container'><h1>Commit heatmap</h1>");
 
         appendHeatmapHtml(html, year);
 
-        html.append("</div></body>");
-
-        /*
-        html.append("<script>");
-        // JavaScript to load CSS dynamically
-        html.append("var link = document.createElement('link');");
-        html.append("link.rel = 'stylesheet';");
-        html.append("link.type = 'text/css';");
-        html.append("link.href = 'src/main/resources/static/heatmap.css';");
-        html.append("document.head.appendChild(link);");
-        html.append("</script>");
-         */
-
+        html.append("</div>");
+        html.append("</body>");
         html.append("</html>");
+
         return html.toString();
     }
 
@@ -68,7 +56,17 @@ public class HeatmapService {
         for(int i = 0; i < 12; i++) {
             int days = map.get(i+1);
 
-            html.append("<div class='month'>");
+            // Dynamically calculate grid-column based on the loop index
+            int startColumn = i + 1;
+            int endColumn = startColumn + 1;
+            System.out.println(startColumn + " / " + endColumn);
+
+            // Append the dynamic grid-column style to the HTML
+            html.append("<div class='month' style='grid-column: ")
+                    .append(startColumn)
+                    .append(" / ")
+                    .append(endColumn)
+                    .append(";'>");
 
             for(int j = 0; j < days; j++) {
                 int commitCount = activityCount[i][j];
@@ -100,14 +98,6 @@ public class HeatmapService {
 
             activityCount[month-1][day-1]++;
         }
-
-        /*
-        for(int i = 0; i < 12; i++) {
-            for(int j = 0; j < 31; j++) {
-                System.out.println(activityCount[i][j]);
-            }
-        }
-         */
     }
 
     // Method to fill how many days each month has
@@ -128,4 +118,7 @@ public class HeatmapService {
 
         return map;
     }
+
+
+
 }

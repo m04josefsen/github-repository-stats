@@ -1,9 +1,15 @@
 .heatmap {
     border: 2px solid orange;
+    width: 750px;
+    /*
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    width: 1000px;
+     */
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 1fr;
+    grid-gap: 10px;
 }
 
 .month {
@@ -12,6 +18,7 @@
     flex-wrap: wrap;
     width: 8%;
     border: 1px solid blue;
+    grid-row: 1 / 2;
 }
 
 .day {
@@ -19,6 +26,7 @@
     height: 20px;
     border: 2px solid black;
     margin: 1px;
+    flex: 1;
 }
 
 .active {
